@@ -20,31 +20,40 @@ import java.util.Set;
  * Time: 10:34 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Graph<V, E>  {
+public class Graph<V, E> {
 
     DirectedGraph<Vertex<V>, Edge<E>> directedGraph;
     
     public Graph() {
+        System.out.println("Graph Constructor called");
         Edge<E> e = new Edge<E>();
        directedGraph = new DefaultDirectedGraph<Vertex<V>,Edge<E>>((Class<? extends Edge<E>>) e.getClass());
 	}
 
-    public void addVertex(Vertex<V> vertex){
-          directedGraph.addVertex(vertex);
+    public boolean addVertex(Vertex<V> vertex){
+          return directedGraph.addVertex(vertex);
     }
 
-    public void addEdge(Vertex<V> fromVertice, Vertex<V> toVertice, Edge<E> edge){
-          directedGraph.addEdge(fromVertice, toVertice, edge);
+    public boolean addEdge(Vertex<V> fromVertice, Vertex<V> toVertice, Edge<E> edge){
+        System.out.println("Add edge called");
+        return directedGraph.addEdge(fromVertice, toVertice, edge);
     }
 
-    public List<Vertex<V>> searchParent(Vertex<V> fromNode, List<Condition> nodeRelationConditions, List<Condition> nodeConditions) {
-        List<Vertex<V>> resultSet = new ArrayList<Vertex<V>>();
-        findMatchingParents(fromNode, nodeRelationConditions, nodeConditions, resultSet);
-        return resultSet;
+
+    public boolean containsVertex(Vertex<V> vertex)
+    {
+        return directedGraph.containsVertex(vertex);
+    }
+
+    public boolean containsEdge(Edge<E> edge)
+    {
+        return directedGraph.containsEdge(edge);
     }
 
     boolean attribtuesMatched(Map<String,Object> attributes, List<Condition> conditions, boolean mustHaveConditions)
     {
+        System.out.println("Attributes :"+attributes);
+        System.out.println("Conditions :"+conditions);
         if(mustHaveConditions==false && (attributes==null ||conditions == null))
             return true;
         if(mustHaveConditions==true && conditions==null)
@@ -67,20 +76,48 @@ public class Graph<V, E>  {
         return true;
     }
 
-    void findMatchingParents(Vertex<V> vertice, List<Condition> nodeRelationConditions, List<Condition> nodeConditions,List<Vertex<V>> resultSet)
+    void findMatchingParents(Vertex<V> vertex, List<Condition> nodeRelationConditions, List<Condition> nodeConditions,List<V> resultSet)
     {
-       Set<Edge<E>> edges = directedGraph.incomingEdgesOf(vertice);
+       Set<Edge<E>> edges = directedGraph.incomingEdgesOf(vertex);
         for(Edge<E> edge: edges)
         {
             if(attribtuesMatched(edge.getAttributes(),nodeRelationConditions,false) )
             {
+                System.out.println("Checking for edge "+edge);
                 if(attribtuesMatched(directedGraph.getEdgeSource(edge).getAttributes(),nodeConditions,true))
                 {
-                    resultSet.add(directedGraph.getEdgeSource(edge));
+                    resultSet.add(directedGraph.getEdgeSource(edge).getNode());
                 }
                 findMatchingParents(directedGraph.getEdgeSource(edge), nodeRelationConditions, nodeConditions, resultSet);
             }
 
         }
+    }
+    public List<V> searchParents(Vertex<V> fromNode, List<Condition> nodeRelationConditions, List<Condition> nodeConditions) {
+        List<V> resultSet = new ArrayList<V>();
+        findMatchingParents(fromNode, nodeRelationConditions, nodeConditions, resultSet);
+        return resultSet;
+    }
+
+    void findMatchingChildren(Vertex<V> vertex, List<Condition> nodeRelationConditions, List<Condition> nodeConditions,List<V> resultSet)
+    {
+        Set<Edge<E>> edges = directedGraph.outgoingEdgesOf(vertex);
+        for(Edge<E> edge: edges)
+        {
+            if(attribtuesMatched(edge.getAttributes(),nodeRelationConditions,false) )
+            {
+                if(attribtuesMatched(directedGraph.getEdgeTarget(edge).getAttributes(),nodeConditions,true))
+                {
+                    resultSet.add(directedGraph.getEdgeTarget(edge).getNode());
+                }
+                findMatchingChildren(directedGraph.getEdgeTarget(edge), nodeRelationConditions, nodeConditions, resultSet);
+            }
+
+        }
+    }
+    public List<V> searchChildren(Vertex<V> fromNode, List<Condition> nodeRelationConditions, List<Condition> nodeConditions) {
+        List<V> resultSet = new ArrayList<V>();
+        findMatchingChildren(fromNode, nodeRelationConditions, nodeConditions, resultSet);
+        return resultSet;
     }
 }

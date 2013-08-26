@@ -52,4 +52,12 @@ public class Edge<T> {
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
+
+    @Override
+    public String toString() {
+        return "Edge{" +
+                "edge=" + edge +
+                ", attributes=" + attributes +
+                '}';
+    }
 }
