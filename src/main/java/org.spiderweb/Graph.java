@@ -25,9 +25,8 @@ public class Graph<V, E> {
     DirectedGraph<Vertex<V>, Edge<E>> directedGraph;
     
     public Graph() {
-        System.out.println("Graph Constructor called");
         Edge<E> e = new Edge<E>();
-       directedGraph = new DefaultDirectedGraph<Vertex<V>,Edge<E>>((Class<? extends Edge<E>>) e.getClass());
+        directedGraph = new DefaultDirectedGraph<Vertex<V>,Edge<E>>((Class<? extends Edge<E>>) e.getClass());
 	}
 
     public boolean addVertex(Vertex<V> vertex){
@@ -35,7 +34,6 @@ public class Graph<V, E> {
     }
 
     public boolean addEdge(Vertex<V> fromVertice, Vertex<V> toVertice, Edge<E> edge){
-        System.out.println("Add edge called");
         return directedGraph.addEdge(fromVertice, toVertice, edge);
     }
 
