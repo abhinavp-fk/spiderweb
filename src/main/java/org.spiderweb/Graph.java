@@ -48,7 +48,7 @@ public class Graph<V, E> {
         return directedGraph.containsEdge(edge);
     }
 
-    boolean attribtuesMatched(Map<String,Object> attributes, List<Condition> conditions, boolean mustHaveConditions)
+    boolean attribtuesMatched(Map<String,Map<String,Object>> attributes, List<Condition> conditions, boolean mustHaveConditions)
     {
         System.out.println("Attributes :"+attributes);
         System.out.println("Conditions :"+conditions);
@@ -61,11 +61,11 @@ public class Graph<V, E> {
         {
 
             String key = condition.getKey();
-            if(mustHaveConditions && (attributes==null ||!attributes.containsKey(key)) )
+            if(mustHaveConditions && (attributes==null ||  attributes.get(condition.getGroup())==null || !attributes.get(condition.getGroup()).containsKey(key)) )
             {
                 return false;
             }
-            if(attributes.containsKey(key) && ! ( ConditionValidator.validate(attributes.get(key),condition)) )
+            if(attributes.containsKey(condition.getGroup()) && attributes.get(condition.getGroup()).containsKey(key) && ! ( ConditionValidator.validate(attributes.get(condition.getGroup()).get(key),condition)) )
             {
                 System.out.println("False found where : Matching attribute for key :"+key + " where attribute value :"+attributes.get(key) );
                 return false;
@@ -74,7 +74,7 @@ public class Graph<V, E> {
         return true;
     }
 
-    void findMatchingParents(Vertex<V> vertex, List<Condition> nodeRelationConditions, List<Condition> nodeConditions,List<V> resultSet)
+    void findMatchingParents(Vertex<V> vertex, String type, List<Condition> nodeRelationConditions, List<Condition> nodeConditions,List<V> resultSet)
     {
        Set<Edge<E>> edges = directedGraph.incomingEdgesOf(vertex);
         for(Edge<E> edge: edges)
@@ -82,40 +82,40 @@ public class Graph<V, E> {
             if(attribtuesMatched(edge.getAttributes(),nodeRelationConditions,false) )
             {
                 System.out.println("Checking for edge "+edge);
-                if(attribtuesMatched(directedGraph.getEdgeSource(edge).getAttributes(),nodeConditions,true))
+                if(attribtuesMatched(directedGraph.getEdgeSource(edge).getAttributes(),nodeConditions,true) &&(type==null || directedGraph.getEdgeSource(edge).getType().equals(type)))
                 {
                     resultSet.add(directedGraph.getEdgeSource(edge).getNode());
                 }
-                findMatchingParents(directedGraph.getEdgeSource(edge), nodeRelationConditions, nodeConditions, resultSet);
+                findMatchingParents(directedGraph.getEdgeSource(edge), type, nodeRelationConditions, nodeConditions, resultSet);
             }
 
         }
     }
-    public List<V> searchParents(Vertex<V> fromNode, List<Condition> nodeRelationConditions, List<Condition> nodeConditions) {
+    public List<V> searchParents(Vertex<V> fromNode, String type, List<Condition> nodeRelationConditions, List<Condition> nodeConditions) {
         List<V> resultSet = new ArrayList<V>();
-        findMatchingParents(fromNode, nodeRelationConditions, nodeConditions, resultSet);
+        findMatchingParents(fromNode, type, nodeRelationConditions, nodeConditions, resultSet);
         return resultSet;
     }
 
-    void findMatchingChildren(Vertex<V> vertex, List<Condition> nodeRelationConditions, List<Condition> nodeConditions,List<V> resultSet)
+    void findMatchingChildren(Vertex<V> vertex, String type,List<Condition> nodeRelationConditions, List<Condition> nodeConditions,List<V> resultSet)
     {
         Set<Edge<E>> edges = directedGraph.outgoingEdgesOf(vertex);
         for(Edge<E> edge: edges)
         {
             if(attribtuesMatched(edge.getAttributes(),nodeRelationConditions,false) )
             {
-                if(attribtuesMatched(directedGraph.getEdgeTarget(edge).getAttributes(),nodeConditions,true))
+                if(attribtuesMatched(directedGraph.getEdgeTarget(edge).getAttributes(),nodeConditions,true) && (type==null || directedGraph.getEdgeSource(edge).getType().equals(type)) )
                 {
                     resultSet.add(directedGraph.getEdgeTarget(edge).getNode());
                 }
-                findMatchingChildren(directedGraph.getEdgeTarget(edge), nodeRelationConditions, nodeConditions, resultSet);
+                findMatchingChildren(directedGraph.getEdgeTarget(edge), type, nodeRelationConditions, nodeConditions, resultSet);
             }
 
         }
     }
-    public List<V> searchChildren(Vertex<V> fromNode, List<Condition> nodeRelationConditions, List<Condition> nodeConditions) {
+    public List<V> searchChildren(Vertex<V> fromNode, String type, List<Condition> nodeRelationConditions, List<Condition> nodeConditions) {
         List<V> resultSet = new ArrayList<V>();
-        findMatchingChildren(fromNode, nodeRelationConditions, nodeConditions, resultSet);
+        findMatchingChildren(fromNode, type, nodeRelationConditions, nodeConditions, resultSet);
         return resultSet;
     }
 }

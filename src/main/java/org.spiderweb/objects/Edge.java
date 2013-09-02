@@ -13,10 +13,10 @@ public class Edge<T> {
 	
 	private T edge;
 
-    private Map<String, Object> attributes;
+    private Map<String,Map<String, Object>> attributes;
 
     public Edge(){}
-    public Edge(T edge, Map<String, Object> attributes) {
+    public Edge(T edge, Map<String,Map<String, Object>> attributes) {
         this.edge = edge;
         this.attributes = attributes;
     }
@@ -42,14 +42,14 @@ public class Edge<T> {
 	/**
 	 * @return the attributes
 	 */
-	public Map<String, Object> getAttributes() {
+	public Map<String,Map<String, Object>> getAttributes() {
 		return attributes;
 	}
 
 	/**
 	 * @param attributes the attributes to set
 	 */
-	public void setAttributes(Map<String, Object> attributes) {
+	public void setAttributes(Map<String,Map<String, Object>> attributes) {
 		this.attributes = attributes;
 	}
 

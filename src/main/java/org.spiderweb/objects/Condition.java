@@ -12,6 +12,9 @@ import java.lang.reflect.Type;
 public class Condition<T> {
     String key;
     T value;
+
+    String group;
+
     ConditionType conditionType;
 
    public enum ConditionType
@@ -21,10 +24,11 @@ public class Condition<T> {
         LESSTHAN,
         GREATHERTHAN
     }
-    public Condition(String key, T value, ConditionType conditionType)
+    public Condition(String key, T value, String group, ConditionType conditionType)
     {
          this.key = key;
          this.value = value;
+         this.group = group;
          this.conditionType = conditionType;
     }
 
@@ -57,11 +61,20 @@ public class Condition<T> {
         return value.getClass();
     }
 
-     @Override
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    @Override
     public String toString() {
         return "Condition{" +
                 "key='" + key + '\'' +
                 ", value=" + value +
+                ", group='" + group + '\'' +
                 ", conditionType=" + conditionType +
                 '}';
     }

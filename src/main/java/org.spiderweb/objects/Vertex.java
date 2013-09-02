@@ -13,22 +13,24 @@ public class Vertex<T> {
 	
 	private T node;
 
-    private Map<String, Object> attributes;
+    private Map<String,Map<String, Object>> attributes;
 
+    private String type;
 	/**
 	 * @param node
 	 */
-	public Vertex(T node) {
+/*	public Vertex(T node) {
 		this.node = node;
 	}
-
+  */
 	/**
 	 * @param node
 	 * @param attributes
 	 */
-	public Vertex(T node, Map<String, Object> attributes) {
+	public Vertex(T node, String type, Map<String,Map<String, Object>> attributes) {
 		this.node = node;
 		this.attributes = attributes;
+        this.type = type;
 	}
 
 	/**
@@ -48,16 +50,26 @@ public class Vertex<T> {
 	/**
 	 * @return the attributes
 	 */
-	public Map<String, Object> getAttributes() {
+	public Map<String,Map<String, Object>> getAttributes() {
 		return attributes;
 	}
 
 	/**
 	 * @param attributes the attributes to set
 	 */
-	public void setAttributes(Map<String, Object> attributes) {
+	public void setAttributes(Map<String,Map<String, Object>> attributes) {
 		this.attributes = attributes;
 	}
+
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 
     @Override
     public String toString() {
